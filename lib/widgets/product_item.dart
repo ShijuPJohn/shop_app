@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/product_detail_screen.dart';
 
 import '../models/product.dart';
 
@@ -10,8 +11,9 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        Navigator.of(context).pushNamed(routeName)
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed(ProductDetailScreen.id, arguments: {'product': product});
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10.0),
@@ -33,9 +35,7 @@ class ProductItem extends StatelessWidget {
             title: Text(
               '\$${product.price}',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.0
-              ),
+              style: TextStyle(fontSize: 12.0),
             ),
             leading: IconButton(
               icon: Icon(Icons.favorite),
