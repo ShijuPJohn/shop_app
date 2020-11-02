@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/models/product.dart';
+import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 
-import '../models/product.dart';
-
 class ProductItem extends StatelessWidget {
-  final Product product;
-
-  const ProductItem({Key key, @required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final product= Provider.of<Product>(context);
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -38,9 +37,9 @@ class ProductItem extends StatelessWidget {
               style: TextStyle(fontSize: 12.0),
             ),
             leading: IconButton(
-              icon: Icon(Icons.favorite),
+              icon: Icon(product.isFavorite?Icons.favorite:Icons.favorite_border),
               onPressed: () {
-                //TODO
+                product.toggleFavoriteStatus();
               },
               color: Theme.of(context).accentColor,
             ),
