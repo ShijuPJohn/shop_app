@@ -17,7 +17,15 @@ class ProductDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              child: Text(product.title),
+              padding: EdgeInsets.all(10.0),
+              width: double.infinity,
+              color: Color.fromRGBO(0, 0, 0, 1),
+              child: Text(product.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                    fontSize: 25.0
+                ),),
             ),
             Image.network(product.imageUrl),
           ],

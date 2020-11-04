@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/material.dart';
 import '../models/product.dart';
 
 class Products with ChangeNotifier {
@@ -40,6 +39,11 @@ class Products with ChangeNotifier {
 
   List<Product> get items {
     return [..._items];
+  }
+
+  List<Product> get favoriteItems{
+    return _items.where((element) => element.isFavorite).toList();
+
   }
 
 // void addProduct(Product product) {

@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/products.dart';
-import 'package:shop_app/screens/product_detail_screen.dart';
-import 'package:shop_app/screens/products_overview_screen.dart';
+import 'package:shop_app/providers/cart.dart';
+import './screens/product_detail_screen.dart';
+import './screens/products_overview_screen.dart';
+
+import './providers/products.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) {
-        return Products();
-      },
-      child: MaterialApp(
-        title: 'MyShop',
-        initialRoute: ProductsOverviewScreen.id,
-        routes: {
-          ProductsOverviewScreen.id: (context) => ProductsOverviewScreen(),
-          ProductDetailScreen.id: (context) => ProductDetailScreen(),
-        },
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.deepOrange,
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (BuildContext context) => Products()),
+          ChangeNotifierProvider(create: (BuildContext context) => Cart()),
+        ],
+        child: MaterialApp(
+          title: 'MyShop',
+          initialRoute: ProductsOverviewScreen.id,
+          routes: {
+            ProductsOverviewScreen.id: (context) => ProductsOverviewScreen(),
+            ProductDetailScreen.id: (context) => ProductDetailScreen(),
+          },
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+            accentColor: Colors.deepOrange,
+          ),
+          home: ProductsOverviewScreen(),
         ),
-        home: ProductsOverviewScreen(),
-      ),
     );
   }
 }
