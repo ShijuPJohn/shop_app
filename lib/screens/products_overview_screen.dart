@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/widgets/badge.dart';
 import 'package:shop_app/widgets/products_grid.dart';
 
@@ -25,11 +26,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       appBar: AppBar(
         title: Text('Shop'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart,
-              color: Colors.white,), onPressed: () {
-            //TODO
-          },
+          Consumer<Cart>(
+            builder: (_, cart, ch) => Badge(
+              value: cart.cartItemsCount.toString(),
+              child: ch,
+            ),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.id);
+              },
+            ),
           ),
           PopupMenuButton(
             icon: Icon(Icons.more_vert),
@@ -55,7 +62,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               ];
             },
           ),
-          
+
         ],
       ),
       body: ProductsGrid(
