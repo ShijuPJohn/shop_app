@@ -13,7 +13,7 @@ class ProductItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context)
-            .pushNamed(ProductDetailScreen.id, arguments: {'product': product});
+            .pushNamed(ProductDetailScreen.id, arguments: {'id': product.id});
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10.0),

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/models/product.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/providers/products.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   static const id = 'product_detail_screen';
 
   @override
   Widget build(BuildContext context) {
-    final routeArgs =
-        ModalRoute.of(context).settings.arguments as Map<String, Product>;
-    var product = routeArgs['product'];
+    final id = (ModalRoute.of(context).settings.arguments
+        as Map<String, String>)['id'];
+    final productId =
+        Provider.of<Products>(context, listen: false).findById(id);
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.title),
+        title: Text(productId.title),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -20,14 +22,33 @@ class ProductDetailScreen extends StatelessWidget {
               padding: EdgeInsets.all(10.0),
               width: double.infinity,
               color: Color.fromRGBO(0, 0, 0, 1),
-              child: Text(product.title,
+              child: Text(
+                productId.title,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                    fontSize: 25.0
-                ),),
+                style: TextStyle(color: Colors.white, fontSize: 25.0),
+              ),
             ),
-            Image.network(product.imageUrl),
+            Image.network(
+              productId.imageUrl,
+              fit: BoxFit.cover,
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Text('\$${productId.price}'),
+            Text('${productId.description}'),
+            FlatButton(
+              onPressed: () {
+                //TODO
+              },
+              child: Text('Add to cart'),
+            ),
+            FlatButton(
+              onPressed: () {
+                //TODO
+              },
+              child: Text('Buy now'),
+            ),
           ],
         ),
       ),
