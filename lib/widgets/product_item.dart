@@ -9,7 +9,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
-    final cart = Provider.of<Cart>(context,listen: false);
+    final cart = Provider.of<Cart>(context, listen: false);
     return InkWell(
       onTap: () {
         Navigator.of(context)
@@ -54,6 +54,20 @@ class ProductItem extends StatelessWidget {
               icon: Icon(Icons.shopping_cart),
               onPressed: () {
                 cart.addItem(product.id, product.price, product.title);
+                Scaffold.of(context).hideCurrentSnackBar();
+                Scaffold.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Added item to cart'),
+                    duration: Duration(seconds: 2),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    action: SnackBarAction(
+                      onPressed: () {
+                        cart.removeSingleItem(product.id);
+                      },
+                      label: 'Undo',
+                    ),
+                  ),
+                );
               },
               color: Theme.of(context).accentColor,
             ),
