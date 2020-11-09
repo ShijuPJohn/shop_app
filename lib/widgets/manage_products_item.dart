@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
 
 import '../models/product.dart';
 
 class ManageProductsItem extends StatelessWidget {
   final Product product;
+  final Function setStateCallback;
 
-  const ManageProductsItem({Key key, this.product}) : super(key: key);
+  const ManageProductsItem({Key key, this.product, this.setStateCallback})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +31,18 @@ class ManageProductsItem extends StatelessWidget {
               color: Theme.of(context).primaryColor,
               onPressed: () {
                 Navigator.of(context).pushNamed(EditProductScreen.id,
-                    arguments: {'id': product.id});
+                    arguments: {
+                      'id': product.id
+                    }).then((value) => setStateCallback());
               },
             ),
             IconButton(
               icon: Icon(Icons.delete),
               color: Theme.of(context).errorColor,
-              onPressed: () {},
+              onPressed: () {
+                Provider.of<Products>(context,listen: false).deleteProduct(product.id);
+                setStateCallback();
+              },
             ),
           ],
         ),
