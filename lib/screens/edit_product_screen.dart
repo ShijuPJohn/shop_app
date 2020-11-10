@@ -17,6 +17,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   var _imageTextEditingController = TextEditingController();
   var product;
+  var isInitialRun = true;
   final _formKey = GlobalKey<FormState>();
   var _editedProduct = Product(
       id: null,
@@ -29,6 +30,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   void initState() {
     _imageUrlFocusNode.addListener(_updateImageUrl);
+
     super.initState();
   }
 
@@ -77,9 +79,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
           as Map<String, String>)['id'];
       product = Provider.of<Products>(context, listen: false).findById(id);
     }
-    _imageTextEditingController = product != null
-        ? TextEditingController(text: product.imageUrl)
-        : TextEditingController();
+    if (isInitialRun) {
+      _imageTextEditingController = product != null
+          ? TextEditingController(text: product.imageUrl)
+          : TextEditingController();
+      isInitialRun = false;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Add/Edit'),
@@ -130,7 +136,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   focusNode: _priceFocusNode,
                   validator: (value) {
                     if (value.isEmpty) {
-                      return 'Price not be empty';
+                      return 'Should not be empty';
                     }
                     if (double.tryParse(value) == null) {
                       return 'Not a valid number';
