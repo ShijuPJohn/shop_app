@@ -49,20 +49,20 @@ class Products with ChangeNotifier {
     return _items.where((element) => element.isFavorite).toList();
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     const url = 'https://shop-app-cc8bd.firebaseio.com/products.json';
-    http
-        .post(url,
-            body: json.encode({
-              'title': product.title,
-              'description': product.description,
-              'imageUrl': product.imageUrl,
-              'price': product.price,
-              'isFavorite': product.isFavorite,
-            }))
-        .then((value) {
+    try {
+      final response = await http.post(url,
+          body: json.encode({
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isFavorite': product.isFavorite,
+          }));
+
       final newProduct = Product(
-        id: json.decode(value.body)['name'],
+        id: json.decode(response.body)['name'],
         title: product.title,
         price: product.price,
         description: product.description,
@@ -71,7 +71,9 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
-    });
+    } catch (error) {
+      throw error;
+    }
   }
 
   void editProduct(String id, Product newProduct) {
