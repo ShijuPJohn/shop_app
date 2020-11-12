@@ -60,7 +60,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.dispose();
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     setState(() {
       isLoading = true;
     });
@@ -70,27 +70,40 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
     _formKey.currentState.save();
     var products = Provider.of<Products>(context, listen: false);
-    product != null
-        ? products.editProduct(product.id, _editedProduct)
-        : products.addProduct(_editedProduct).catchError((error) {
-            return showDialog<Null>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                      title: Text('Oh!, Snap!!'),
-                      content: Text(
-                          'Some error occurred. Sorry for the inconvenience'),
-                      actions: [
-                        FlatButton(
-                          child: Text('Okay'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
-                    ));
-          }).then((value) {
-            Navigator.pop(context);
-          });
+    if (product != null) {
+      products.editProduct(product.id, _editedProduct);
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.pop(context);
+    } else {
+      try {
+        await products.addProduct(_editedProduct);
+      } catch (error) {
+        print('save method catch section');
+        await showDialog<Null>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+                  title: Text('Oh!, Snap!!'),
+                  content:
+                      Text('Some error occurred. Sorry for the inconvenience'),
+                  actions: [
+                    FlatButton(
+                      child: Text('Okay'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ));
+      } finally {
+        print('reached finally');
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.of(context).pop();
+      }
+    }
   }
 
   @override
