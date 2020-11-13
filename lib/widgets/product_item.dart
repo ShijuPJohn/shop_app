@@ -8,6 +8,7 @@ import '../screens/product_detail_screen.dart';
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final scaffold = Scaffold.of(context);
     final product = Provider.of<Product>(context, listen: false);
     final cart = Provider.of<Cart>(context, listen: false);
     return InkWell(
@@ -43,8 +44,15 @@ class ProductItem extends StatelessWidget {
                   icon: Icon(product.isFavorite
                       ? Icons.favorite
                       : Icons.favorite_border),
-                  onPressed: () {
-                    product.toggleFavoriteStatus();
+                  onPressed: () async{
+                   try{
+                    await product.toggleFavoriteStatus();
+                   }
+                   catch(error){
+                     scaffold.showSnackBar(SnackBar(
+                       content: Text('Add as favorite failed',textAlign: TextAlign.center,),
+                     ));
+                   }
                   },
                   color: Theme.of(context).accentColor,
                 );

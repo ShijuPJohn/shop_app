@@ -71,7 +71,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     _formKey.currentState.save();
     var products = Provider.of<Products>(context, listen: false);
     if (product != null) {
-      products.editProduct(product.id, _editedProduct);
+      await products.editProduct(product.id, _editedProduct);
       setState(() {
         isLoading = false;
       });

@@ -14,6 +14,9 @@ class UserProductsScreen extends StatefulWidget {
 }
 
 class _UserProductsScreenState extends State<UserProductsScreen> {
+  Future<void> _refreshFunction() async {
+    await Provider.of<Products>(context, listen: false).fetchAndStoreProducts();
+  }
 
   void setStateFunction() {
     setState(() {});
@@ -34,14 +37,17 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemBuilder: (ctx, index) => ManageProductsItem(
-            product: products.items[index],
-            setStateCallback: setStateFunction,
+      body: RefreshIndicator(
+        onRefresh: _refreshFunction,
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: ListView.builder(
+            itemBuilder: (ctx, index) => ManageProductsItem(
+              product: products.items[index],
+              setStateCallback: setStateFunction,
+            ),
+            itemCount: products.items.length,
           ),
-          itemCount: products.items.length,
         ),
       ),
       drawer: AppDrawer(),

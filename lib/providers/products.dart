@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/models/http_exception.dart';
 
 import '../models/product.dart';
 
@@ -68,19 +69,41 @@ class Products with ChangeNotifier {
     }
   }
 
-  void editProduct(String id, Product newProduct) {
+  Future<void> editProduct(String id, Product newProduct) async {
     Product product = findById(id);
     product.title = newProduct.title;
     product.price = newProduct.price;
     product.description = newProduct.description;
     product.imageUrl = newProduct.imageUrl;
+    final url = 'https://shop-app-cc8bd.firebaseio.com/products/$id.json';
+    await http.patch(url,
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+        }));
+    notifyListeners();
   }
 
   Product findById(String id) {
     return _items.firstWhere((element) => element.id == id);
   }
 
-  void deleteProduct(String id) {
-    _items.removeWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url = 'https://shop-app-cc8bd.firebaseio.com/products/$id.json';
+    final existingProductIndex =
+        _items.indexWhere((element) => element.id == id);
+    var existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+      throw HttpException('Could not delete product');
+    }
+    existingProduct = null;
+
+    notifyListeners();
   }
 }
