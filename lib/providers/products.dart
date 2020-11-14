@@ -24,6 +24,9 @@ class Products with ChangeNotifier {
       final decodedResponse =
           json.decode(response.body) as Map<String, dynamic>;
       List<Product> listOfProducts = [];
+      if (decodedResponse == null) {
+        return;
+      }
       decodedResponse.forEach((key, value) {
         var tempProduct = Product(
             id: key,
