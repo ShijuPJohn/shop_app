@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/orders.dart';
 import 'package:shop_app/screens/auth_screen.dart';
@@ -22,24 +23,30 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (BuildContext context) => Products()),
         ChangeNotifierProvider(create: (BuildContext context) => Cart()),
         ChangeNotifierProvider(create: (BuildContext context) => Orders()),
+        ChangeNotifierProvider(create: (BuildContext context) => Auth())
       ],
-      child: MaterialApp(
-        title: 'MyShop',
-        initialRoute: ProductsOverviewScreen.id,
-        routes: {
-          ProductsOverviewScreen.id: (context) => ProductsOverviewScreen(),
-          ProductDetailScreen.id: (context) => ProductDetailScreen(),
-          CartScreen.id: (context) => CartScreen(),
-          OrdersScreen.id: (context) => OrdersScreen(),
-          UserProductsScreen.id: (context) => UserProductsScreen(),
-          EditProductScreen.id: (context) => EditProductScreen(),
-          AuthScreen.id: (context) => AuthScreen(),
+      child: Consumer<Auth>(
+        builder: (context, authData, child) {
+          return MaterialApp(
+            title: 'MyShop',
+            initialRoute:
+                authData.isAuth ? ProductsOverviewScreen.id : AuthScreen.id,
+            routes: {
+              ProductsOverviewScreen.id: (context) => ProductsOverviewScreen(),
+              ProductDetailScreen.id: (context) => ProductDetailScreen(),
+              CartScreen.id: (context) => CartScreen(),
+              OrdersScreen.id: (context) => OrdersScreen(),
+              UserProductsScreen.id: (context) => UserProductsScreen(),
+              EditProductScreen.id: (context) => EditProductScreen(),
+              AuthScreen.id: (context) => AuthScreen(),
+            },
+            theme: ThemeData(
+              primarySwatch: Colors.purple,
+              accentColor: Colors.deepOrange,
+            ),
+            home: ProductsOverviewScreen(),
+          );
         },
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.deepOrange,
-        ),
-        home: ProductsOverviewScreen(),
       ),
     );
   }
