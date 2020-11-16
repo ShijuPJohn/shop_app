@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 
 import '../models/product.dart';
 import '../providers/cart.dart';
@@ -39,20 +40,24 @@ class ProductItem extends StatelessWidget {
               style: TextStyle(fontSize: 12.0),
             ),
             leading: Consumer<Product>(
-              builder: (BuildContext context, product, Widget child) {
+              builder: (BuildContext context, product, child) {
                 return IconButton(
                   icon: Icon(product.isFavorite
                       ? Icons.favorite
                       : Icons.favorite_border),
-                  onPressed: () async{
-                   try{
-                    await product.toggleFavoriteStatus();
-                   }
-                   catch(error){
-                     scaffold.showSnackBar(SnackBar(
-                       content: Text('Add as favorite failed',textAlign: TextAlign.center,),
-                     ));
-                   }
+                  onPressed: () async {
+                    try {
+                      await product.toggleFavoriteStatus(
+                          Provider.of<Auth>(context, listen: false).token,
+                          Provider.of<Auth>(context, listen: false).userId);
+                    } catch (error) {
+                      scaffold.showSnackBar(SnackBar(
+                        content: Text(
+                          'Add as favorite failed',
+                          textAlign: TextAlign.center,
+                        ),
+                      ));
+                    }
                   },
                   color: Theme.of(context).accentColor,
                 );

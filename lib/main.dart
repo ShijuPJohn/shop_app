@@ -3,13 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/orders.dart';
+import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/auth_screen.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
 import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/screens/user_products_screen.dart';
 
-import './providers/products.dart';
 import './screens/product_detail_screen.dart';
 import './screens/products_overview_screen.dart';
 
@@ -20,17 +20,42 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (BuildContext context) => Products()),
+        ChangeNotifierProvider(create: (BuildContext context) => Auth()),
         ChangeNotifierProvider(create: (BuildContext context) => Cart()),
-        ChangeNotifierProvider(create: (BuildContext context) => Orders()),
-        ChangeNotifierProvider(create: (BuildContext context) => Auth())
+        ChangeNotifierProxyProvider<Auth, Orders>(
+          update: (context, value, previous) {
+            return Orders(value.token, previous == null ? [] : previous.orders,
+                value.userId);
+          },
+          create: null,
+        ),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          update: (context, value, previous) {
+            return Products(value.token, previous == null ? [] : previous.items,
+                value.userId);
+          },
+          create: null,
+        ),
+        // ChangeNotifierProvider(create: (BuildContext context) => Products()),
       ],
       child: Consumer<Auth>(
         builder: (context, authData, child) {
           return MaterialApp(
             title: 'MyShop',
-            initialRoute:
-                authData.isAuth ? ProductsOverviewScreen.id : AuthScreen.id,
+            home: authData.isAuth
+                ? ProductsOverviewScreen()
+                : FutureBuilder(
+                    future: authData.tryAutoLogin(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return AuthScreen();
+                      }
+                    },
+                  ),
             routes: {
               ProductsOverviewScreen.id: (context) => ProductsOverviewScreen(),
               ProductDetailScreen.id: (context) => ProductDetailScreen(),
@@ -44,7 +69,6 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.purple,
               accentColor: Colors.deepOrange,
             ),
-            home: ProductsOverviewScreen(),
           );
         },
       ),

@@ -119,13 +119,14 @@ class _AuthCardState extends State<AuthCard> {
     });
     try {
       if (_authMode == AuthMode.Login) {
-        await Provider.of<Auth>(context, listen: false).login(
+        var response = await Provider.of<Auth>(context, listen: false).login(
           _authData['email'],
           _authData['password'],
         );
+        // print(response);
       } else {
         // Sign user up
-        await Provider.of<Auth>(context, listen: false).signUp(
+        var response = await Provider.of<Auth>(context, listen: false).signUp(
           _authData['email'],
           _authData['password'],
         );
@@ -223,6 +224,7 @@ class _AuthCardState extends State<AuthCard> {
                     if (value.isEmpty || value.length < 5) {
                       return 'Password is too short!';
                     }
+                    return null; //TODO
                   },
                   onSaved: (value) {
                     _authData['password'] = value;
@@ -238,6 +240,7 @@ class _AuthCardState extends State<AuthCard> {
                             if (value != _passwordController.text) {
                               return 'Passwords do not match!';
                             }
+                            return null; //TODO
                           }
                         : null,
                   ),

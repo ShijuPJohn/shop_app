@@ -15,7 +15,14 @@ class UserProductsScreen extends StatefulWidget {
 
 class _UserProductsScreenState extends State<UserProductsScreen> {
   Future<void> _refreshFunction() async {
-    await Provider.of<Products>(context, listen: false).fetchAndStoreProducts();
+    await Provider.of<Products>(context, listen: false)
+        .fetchAndStoreProducts(true);
+  }
+
+  @override
+  void initState() {
+    Provider.of<Products>(context, listen: false).fetchAndStoreProducts(true);
+    super.initState();
   }
 
   void setStateFunction() {
@@ -24,7 +31,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final products = Provider.of<Products>(context);
+    // final products = Provider.of<Products>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Manage Products'),
@@ -37,19 +44,31 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _refreshFunction,
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: ListView.builder(
-            itemBuilder: (ctx, index) => ManageProductsItem(
-              product: products.items[index],
-              setStateCallback: setStateFunction,
-            ),
-            itemCount: products.items.length,
-          ),
-        ),
-      ),
+      body: FutureBuilder(
+          future: _refreshFunction(),
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return RefreshIndicator(
+                onRefresh: _refreshFunction,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Consumer<Products>(
+                    builder: (ctx, productsData, child) => ListView.builder(
+                      itemBuilder: (ctx, index) => ManageProductsItem(
+                        product: productsData.items[index],
+                        setStateCallback: setStateFunction,
+                      ),
+                      itemCount: productsData.items.length,
+                    ),
+                  ),
+                ),
+              );
+            }
+          }),
       drawer: AppDrawer(),
     );
   }
