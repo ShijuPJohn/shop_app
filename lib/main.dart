@@ -8,6 +8,7 @@ import 'package:shop_app/screens/auth_screen.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
 import 'package:shop_app/screens/orders_screen.dart';
+import 'package:shop_app/screens/splash_screen.dart';
 import 'package:shop_app/screens/user_products_screen.dart';
 
 import './screens/product_detail_screen.dart';
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: SplashScreen(),
                         );
                       } else {
                         return AuthScreen();
