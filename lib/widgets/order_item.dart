@@ -19,30 +19,37 @@ class _OrderItemState extends State<OrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(10.0),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('\$${widget.order.amount}'),
-            subtitle: Text(
-                DateFormat('dd/MM/yyyy hh:mm').format(widget.order.dateTime)),
-            trailing: IconButton(
-              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-              onPressed: () {
-                setState(() {
-                  _expanded = !_expanded;
-                });
-              },
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      height: _expanded
+          ? min(widget.order.products.length * 20.0 + 150.0, 180.0)
+          : 95,
+      child: Card(
+        margin: EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            ListTile(
+              title: Text('\$${widget.order.amount}'),
+              subtitle: Text(
+                  DateFormat('dd/MM/yyyy hh:mm').format(widget.order.dateTime)),
+              trailing: IconButton(
+                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                onPressed: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
+              ),
             ),
-          ),
-          if (_expanded)
-            Container(
-              height: min(widget.order.products.length * 20.0 + 100.0, 70.0),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              height:  _expanded
+                  ? min(widget.order.products.length * 20.0 + 10.0, 100.0)
+                  : 0,
               child: ListView(
                 children: widget.order.products
                     .map((prod) => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               prod.title,
@@ -51,17 +58,20 @@ class _OrderItemState extends State<OrderItem> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text('${prod.quantity}X\$${prod.price}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey,
-                            ),),
+                            Text(
+                              '${prod.quantity}X\$${prod.price}',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ],
                         ))
                     .toList(),
               ),
             )
-        ],
+          ],
+        ),
       ),
     );
   }

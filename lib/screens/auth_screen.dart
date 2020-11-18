@@ -12,7 +12,9 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
+    final deviceSize = MediaQuery
+        .of(context)
+        .size;
     // final transformConfig = Matrix4.rotationZ(-8 * pi / 180);
     // transformConfig.translate(-10.0);
     return Scaffold(
@@ -44,7 +46,7 @@ class AuthScreen extends StatelessWidget {
                     child: Container(
                       margin: EdgeInsets.all(20.0),
                       padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 94.0),
                       transform: Matrix4.rotationZ(-8 * pi / 180)
                         ..translate(-10.0),
                       // ..translate(-10.0),
@@ -63,7 +65,8 @@ class AuthScreen extends StatelessWidget {
                         child: Text(
                           'MyShop',
                           style: TextStyle(
-                            color: Theme.of(context)
+                            color: Theme
+                                .of(context)
                                 .accentTextTheme
                                 .headline6
                                 .color,
@@ -109,26 +112,27 @@ class _AuthCardState extends State<AuthCard>
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
-  // AnimationController _controller;
-  // Animation<Size> _heightAnimation;
-  //
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   _controller.dispose();
-  //   super.dispose();
-  // }
-  //
-  // @override
-  // void initState() {
-  //   _controller = AnimationController(
-  //       vsync: this, duration: Duration(milliseconds: 1000));
-  //   _heightAnimation = Tween<Size>(
-  //           begin: Size(double.infinity, 240), end: Size(double.infinity, 320))
-  //       .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-  //   // _heightAnimation.addListener(() => setState(() {}));
-  //   super.initState();
-  // }
+  AnimationController _controller;
+  Animation<Offset> _slideAnimation;
+  Animation<double> _opacityAnimation;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 500));
+    _slideAnimation = Tween<Offset>(begin: Offset(0, -.5), end: Offset(0, 0))
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+    // _heightAnimation.addListener(() => setState(() {}));
+    super.initState();
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
@@ -180,7 +184,8 @@ class _AuthCardState extends State<AuthCard>
   Future<void> dialogDisplay(String errorMessage) async {
     await showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) =>
+            AlertDialog(
               title: Text('Oh!, Snap!!'),
               content: Text(errorMessage),
               actions: [
@@ -198,19 +203,21 @@ class _AuthCardState extends State<AuthCard>
     if (_authMode == AuthMode.Login) {
       setState(() {
         _authMode = AuthMode.Signup;
-        // _controller.forward();
+        _controller.forward();
       });
     } else {
       setState(() {
         _authMode = AuthMode.Login;
-        // _controller.reverse();
+        _controller.reverse();
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
+    final deviceSize = MediaQuery
+        .of(context)
+        .size;
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -256,20 +263,31 @@ class _AuthCardState extends State<AuthCard>
                     _authData['password'] = value;
                   },
                 ),
-                if (_authMode == AuthMode.Signup)
-                  TextFormField(
-                    enabled: _authMode == AuthMode.Signup,
-                    decoration: InputDecoration(labelText: 'Confirm Password'),
-                    obscureText: true,
-                    validator: _authMode == AuthMode.Signup
-                        ? (value) {
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match!';
-                            }
-                            return null; //TODO
+                // if (_authMode == AuthMode.Signup)
+                AnimatedContainer(
+                  height: _authMode == AuthMode.Login ? 0 : 60.0,
+                  duration: Duration(milliseconds: 500),
+                  child: FadeTransition(
+                    opacity: _opacityAnimation,
+                    child: SlideTransition(
+                      position:_slideAnimation,
+                      child: TextFormField(
+                        enabled: _authMode == AuthMode.Signup,
+                        decoration:
+                        InputDecoration(labelText: 'Confirm Password'),
+                        obscureText: true,
+                        validator: _authMode == AuthMode.Signup
+                            ? (value) {
+                          if (value != _passwordController.text) {
+                            return 'Passwords do not match!';
                           }
-                        : null,
+                          return null; //TODO
+                        }
+                            : null,
+                      ),
+                    ),
                   ),
+                ),
                 SizedBox(
                   height: 20,
                 ),
@@ -278,23 +296,33 @@ class _AuthCardState extends State<AuthCard>
                 else
                   RaisedButton(
                     child:
-                        Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
+                    Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
                     onPressed: _submit,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                     padding:
-                        EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                    color: Theme.of(context).primaryColor,
-                    textColor: Theme.of(context).primaryTextTheme.button.color,
+                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
+                    color: Theme
+                        .of(context)
+                        .primaryColor,
+                    textColor: Theme
+                        .of(context)
+                        .primaryTextTheme
+                        .button
+                        .color,
                   ),
                 FlatButton(
                   child: Text(
-                      '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
+                      '${_authMode == AuthMode.Login
+                          ? 'SIGNUP'
+                          : 'LOGIN'} INSTEAD'),
                   onPressed: _switchAuthMode,
                   padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  textColor: Theme.of(context).primaryColor,
+                  textColor: Theme
+                      .of(context)
+                      .primaryColor,
                 ),
               ],
             ),

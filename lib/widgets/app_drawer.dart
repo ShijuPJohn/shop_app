@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/helpers/custom_route.dart';
 import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
@@ -20,8 +21,9 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.shop),
             title: Text('Shop'),
             onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(ProductsOverviewScreen.id);
+              Navigator.of(context).pushReplacement(
+                  CustomRoute(builder: (ctx) => ProductsOverviewScreen()));
+              // Navigator.of(context).pushReplacementNamed(ProductsOverviewScreen.id);
             },
           ),
           Divider(),
@@ -29,7 +31,9 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.payment),
             title: Text('Orders'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(OrdersScreen.id);
+              Navigator.of(context).pushReplacement(
+                  CustomRoute(builder: (ctx) => OrdersScreen()));
+              // Navigator.of(context).pushReplacementNamed(OrdersScreen.id);
             },
           ),
           Divider(),
@@ -37,7 +41,9 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.payment),
             title: Text('Manage Products'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(UserProductsScreen.id);
+              Navigator.of(context).pushReplacement(
+                  CustomRoute(builder: (ctx) => UserProductsScreen()));
+              // Navigator.of(context).pushReplacementNamed(UserProductsScreen.id);
             },
           ),
           Divider(),
@@ -47,7 +53,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              Provider.of<Auth>(context,listen: false).logout();
+              Provider.of<Auth>(context, listen: false).logout();
             },
           ),
         ],
